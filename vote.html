@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOTE 20 STARS | Prototype</title>
+<style>
+  :root{
+    --pink:#ff2e88;
+    --pink-dark:#d61a6e;
+    --purple:#7b2ff7;
+    --ink:#1a1030;
+    --muted:#7c7390;
+    --bg:#0f0820;
+    --card:#ffffff;
+    --gold:#ffc83d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',-apple-system,'Helvetica Neue','Prompt','Sarabun',sans-serif;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(123,47,247,.45), transparent 60%),
+      linear-gradient(180deg,#150a2e 0%, #0f0820 100%);
+    color:#fff;min-height:100vh;
+  }
+
+  /* ---------- Top Nav ---------- */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 24px;
+    background:rgba(15,8,32,.78);backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.5px}
+  .brand .logo{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    display:grid;place-items:center;font-size:18px;
+  }
+  .nav-right{display:flex;align-items:center;gap:14px}
+  .member-pill{
+    font-size:13px;padding:6px 12px;border-radius:999px;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  }
+  .member-pill b{color:var(--gold)}
+  .btn{
+    cursor:pointer;border:none;border-radius:999px;font-weight:700;
+    transition:transform .12s ease, box-shadow .12s ease, filter .12s ease;
+  }
+  .btn:active{transform:translateY(1px) scale(.98)}
+  .btn-login{
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    color:#fff;padding:9px 20px;font-size:14px;
+    box-shadow:0 6px 18px rgba(255,46,136,.45);
+  }
+  .btn-login:hover{filter:brightness(1.08)}
+
+  /* ---------- Banner 1320 x 400 ---------- */
+  .wrap{max-width:1320px;margin:0 auto;padding:0 16px}
+  .banner{
+    position:relative;width:100%;max-width:1320px;aspect-ratio:1320/400;
+    margin:22px auto 8px;border-radius:22px;overflow:hidden;
+    background:
+      radial-gradient(700px 380px at 18% 20%, rgba(255,46,136,.85), transparent 60%),
+      radial-gradient(700px 420px at 85% 90%, rgba(123,47,247,.9), transparent 60%),
+      linear-gradient(120deg,#2a0f4d,#120726);
+    box-shadow:0 24px 60px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.06);
+    display:flex;align-items:center;
+  }
+  .banner::after{
+    content:"";position:absolute;inset:0;
+    background-image:
+      radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.8), transparent),
+      radial-gradient(2px 2px at 70% 60%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1.5px 1.5px at 40% 80%, rgba(255,255,255,.7), transparent),
+      radial-gradient(1.5px 1.5px at 88% 25%, rgba(255,255,255,.6), transparent);
+    opacity:.7;pointer-events:none;
+  }
+  .banner-content{position:relative;z-index:2;padding:0 6%}
+  .banner .eyebrow{
+    display:inline-block;font-size:14px;font-weight:700;letter-spacing:3px;
+    padding:7px 16px;border-radius:999px;
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);
+    margin-bottom:14px;
+  }
+  .banner h1{
+    font-size:clamp(28px,5vw,64px);line-height:1.02;font-weight:900;
+    text-shadow:0 4px 24px rgba(0,0,0,.5);
+  }
+  .banner h1 span{
+    background:linear-gradient(90deg,#ffd86b,#ff2e88,#7b2ff7);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .banner p{margin-top:12px;max-width:560px;font-size:clamp(14px,1.6vw,18px);color:#e9e0ff}
+  .banner-size-tag{
+    position:absolute;right:14px;bottom:12px;z-index:3;
+    font-size:11px;letter-spacing:1px;color:rgba(255,255,255,.55);
+    background:rgba(0,0,0,.3);padding:4px 10px;border-radius:8px;
+  }
+
+  /* ---------- Section heading ---------- */
+  .section-head{display:flex;align-items:end;justify-content:space-between;margin:34px 0 18px;flex-wrap:wrap;gap:12px}
+  .section-head h2{font-size:26px;font-weight:900;display:flex;align-items:center;gap:10px}
+  .section-head h2 .star-emoji{filter:drop-shadow(0 2px 6px rgba(255,200,61,.6))}
+  .section-head p{color:#cbbfe6;font-size:14px}
+
+  /* ---------- Star grid (20 boxes) ---------- */
+  .grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding-bottom:60px;
+  }
+  @media(max-width:1080px){.grid{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:460px){.grid{grid-template-columns:1fr}}
+
+  .star-card{
+    background:var(--card);color:var(--ink);border-radius:18px;overflow:hidden;
+    box-shadow:0 12px 30px rgba(0,0,0,.35);
+    display:flex;flex-direction:column;
+    transition:transform .18s ease, box-shadow .18s ease;
+    position:relative;
+  }
+  .star-card:hover{transform:translateY(-6px);box-shadow:0 22px 44px rgba(123,47,247,.45)}
+  .rank-badge{
+    position:absolute;top:12px;left:12px;z-index:3;
+    width:34px;height:34px;border-radius:10px;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    color:#fff;font-weight:900;display:grid;place-items:center;font-size:15px;
+    box-shadow:0 6px 14px rgba(0,0,0,.3);
+  }
+  /* star image */
+  .star-img{
+    position:relative;aspect-ratio:1/1;
+    display:grid;place-items:center;color:#fff;font-size:64px;font-weight:900;
+  }
+  .star-img .initials{text-shadow:0 4px 16px rgba(0,0,0,.35);opacity:.92}
+  .star-body{padding:14px 14px 16px;display:flex;flex-direction:column;gap:10px;flex:1}
+  /* 2 details */
+  .star-name{font-size:18px;font-weight:800;line-height:1.15}
+  .detail-list{display:flex;flex-direction:column;gap:5px}
+  .detail-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+  .detail-row .ic{width:16px;text-align:center}
+  .detail-row b{color:var(--ink)}
+
+  .vote-count{
+    display:flex;align-items:center;gap:6px;font-weight:800;color:var(--pink-dark);
+    font-size:14px;margin-top:2px;
+  }
+  /* social share */
+  .social{display:flex;gap:8px;margin-top:2px}
+  .social a{
+    width:32px;height:32px;border-radius:9px;display:grid;place-items:center;
+    color:#fff;text-decoration:none;font-size:15px;font-weight:700;
+    transition:transform .12s ease, filter .12s ease;
+  }
+  .social a:hover{transform:translateY(-2px);filter:brightness(1.1)}
+  .s-fb{background:#1877f2}.s-x{background:#111}.s-line{background:#06c755}.s-link{background:#7c7390}
+
+  .vote-btn{
+    margin-top:auto;width:100%;padding:12px;font-size:15px;color:#fff;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    box-shadow:0 8px 20px rgba(255,46,136,.4);
+  }
+  .vote-btn:hover{filter:brightness(1.08)}
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed;inset:0;z-index:100;display:none;
+    align-items:center;justify-content:center;padding:18px;
+    background:rgba(8,4,18,.72);backdrop-filter:blur(4px);
+  }
+  .overlay.open{display:flex;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .modal{
+    width:100%;max-width:440px;background:#fff;color:var(--ink);
+    border-radius:22px;padding:26px;position:relative;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);animation:pop .25s ease;
+  }
+  @keyframes pop{from{transform:translateY(20px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+  .modal .close{
+    position:absolute;top:14px;right:16px;border:none;background:none;
+    font-size:24px;cursor:pointer;color:var(--muted);line-height:1;
+  }
+  .modal h3{font-size:22px;font-weight:900;margin-bottom:4px}
+  .modal .who{color:var(--muted);font-size:14px;margin-bottom:18px}
+  .modal .who b{color:var(--pink-dark)}
+
+  .points{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:8px}
+  .point-btn{
+    padding:18px 12px;border-radius:14px;border:2px solid #efe9fb;background:#faf7ff;
+    color:var(--ink);font-weight:800;cursor:pointer;text-align:center;
+    transition:all .14s ease;
+  }
+  .point-btn .pt{font-size:26px;display:block;line-height:1}
+  .point-btn .lbl{font-size:12px;color:var(--muted);font-weight:700}
+  .point-btn:hover{border-color:var(--pink);transform:translateY(-3px)}
+  .point-btn.active{
+    border-color:var(--pink);
+    background:linear-gradient(135deg,rgba(255,46,136,.12),rgba(123,47,247,.12));
+  }
+  .modal-confirm{
+    margin-top:16px;width:100%;padding:14px;font-size:16px;color:#fff;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    box-shadow:0 10px 24px rgba(255,46,136,.4);
+  }
+  .modal-confirm:disabled{filter:grayscale(.6) opacity(.6);cursor:not-allowed;box-shadow:none}
+
+  /* members-only state */
+  .gate{
+    text-align:center;padding:8px 0 4px;
+  }
+  .gate .lock{font-size:46px;margin-bottom:10px}
+  .gate h3{color:var(--ink)}
+  .gate p{color:var(--muted);font-size:14px;margin:8px 0 18px}
+  .gate .btn-login{display:inline-block}
+
+  /* success popup */
+  .success .check{
+    width:84px;height:84px;border-radius:50%;margin:4px auto 14px;
+    background:linear-gradient(135deg,#27d07e,#06b964);
+    display:grid;place-items:center;font-size:46px;color:#fff;
+    box-shadow:0 12px 28px rgba(6,185,100,.5);
+    animation:popCheck .4s cubic-bezier(.2,1.4,.5,1);
+  }
+  @keyframes popCheck{from{transform:scale(0)}to{transform:scale(1)}}
+  .success{text-align:center}
+  .success h3{font-size:24px;color:var(--ink)}
+  .success p{color:var(--muted);font-size:14px;margin-top:8px}
+  .success .summary{
+    margin:16px 0;padding:14px;border-radius:14px;background:#faf7ff;
+    border:1px solid #efe9fb;font-size:14px;color:var(--ink);
+  }
+  .success .summary b{color:var(--pink-dark)}
+
+  .footer{text-align:center;padding:26px;color:rgba(255,255,255,.45);font-size:13px}
+  .footer a{color:#cbbfe6}
+
+  /* toast */
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);
+    background:#1a1030;color:#fff;padding:12px 22px;border-radius:999px;
+    font-size:14px;font-weight:600;z-index:200;border:1px solid rgba(255,255,255,.15);
+    box-shadow:0 10px 30px rgba(0,0,0,.5);transition:transform .3s ease;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+  <!-- ===== NAV ===== -->
+  <nav class="nav">
+    <div class="brand"><span class="logo">★</span> GMM<span style="color:var(--pink)">VOTE</span></div>
+    <div class="nav-right">
+      <span class="member-pill" id="memberPill">สถานะ: <b id="memberStatus">บุคคลทั่วไป</b></span>
+      <button class="btn btn-login" id="loginBtn" onclick="toggleMember()">เข้าสู่ระบบ</button>
+    </div>
+  </nav>
+
+  <!-- ===== BANNER 1320 x 400 ===== -->
+  <div class="wrap">
+    <header class="banner">
+      <div class="banner-content">
+        <span class="eyebrow">GMMTV PROJECT • SEASON 2026</span>
+        <h1>โหวตให้ <span>20 ดาวในดวงใจ</span><br>ของคุณ</h1>
+        <p>เลือกศิลปินที่คุณชื่นชอบ แล้วเทคะแนนให้สุดพลัง! โหวตได้ทั้ง 10 / 20 / 50 / 100 คะแนน เฉพาะสมาชิกเท่านั้น</p>
+      </div>
+      <span class="banner-size-tag">HEAD BANNER • 1320 × 400 px</span>
+    </header>
+  </div>
+
+  <!-- ===== STAR GRID ===== -->
+  <main class="wrap">
+    <div class="section-head">
+      <div>
+        <h2><span class="star-emoji">⭐</span> 20 STARS — เลือกโหวตดาวของคุณ</h2>
+      </div>
+      <p id="totalVotes">คะแนนรวมทั้งหมด: 0 คะแนน</p>
+    </div>
+    <section class="grid" id="grid"><!-- cards injected by JS --></section>
+  </main>
+
+  <!-- ===== MODAL ===== -->
+  <div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal" id="modal"><!-- content injected --></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <footer class="footer">
+    Prototype • อ้างอิงรูปแบบจาก <a href="https://gmmtvprojectalpha.com" target="_blank" rel="noopener">gmmtvprojectalpha.com</a> • สร้างเพื่อการสาธิตเท่านั้น
+  </footer>
+
+<script>
+  /* ----- Data: 20 stars, each with 2 details ----- */
+  const FIRST=["มิว","กลัฟ","ออฟ","กัน","ไบร์ท","วิน","ไนน์","เต","ฟอร์ด","พีพี","บิวกิ้น","พีพี","เจมิไนน์","โฟร์ท","โจ๊ก","นานิ","มาร์ค","พอนด์","ภูวินทร์","นนน"];
+  const ROLES=["นักแสดงนำ","นักร้อง","นักแสดง","พิธีกร","นักแสดงนำ","นักร้องนำ","นักแสดง","นักแสดงนำ","นักแสดง","นักร้อง","นักแสดงนำ","นักแสดง","นักร้อง","นักแสดงนำ","นักแสดง","นักแสดงนำ","นักร้อง","นักแสดง","นักแสดงนำ","นักร้อง"];
+  const SERIES=["The Eclipse","2gether","Bad Buddy","Theory of Love","F4 Thailand","My School President","Dark Blue Kiss","A Tale of Thousand Stars","Star in My Mind","Vice Versa","KinnPorsche","Never Let Me Go","Cherry Magic","Last Twilight","Only Friends","Wandee Goodday","Moonlight Chicken","Be My Favorite","The Warp Effect","23.5"];
+  const GRADS=[
+    ["#ff9a9e","#fad0c4"],["#a18cd1","#fbc2eb"],["#ffecd2","#fcb69f"],["#84fab0","#8fd3f4"],
+    ["#f6d365","#fda085"],["#5ee7df","#b490ca"],["#c471f5","#fa71cd"],["#48c6ef","#6f86d6"],
+    ["#feada6","#f5efef"],["#fbc2eb","#a6c1ee"],["#fdcbf1","#e6dee9"],["#a1c4fd","#c2e9fb"],
+    ["#ff6a88","#ff99ac"],["#74ebd5","#9face6"],["#ee9ca7","#ffdde1"],["#f093fb","#f5576c"],
+    ["#43e97b","#38f9d7"],["#fa709a","#fee140"],["#30cfd0","#330867"],["#ff5858","#f09819"]
+  ];
+
+  const stars=[];
+  for(let i=0;i<20;i++){
+    stars.push({
+      id:i+1,
+      name:FIRST[i]+" ★"+(i+1),
+      role:ROLES[i],
+      series:SERIES[i],
+      grad:GRADS[i],
+      votes:Math.floor(Math.random()*4000)+500
+    });
+  }
+
+  let isMember=false;
+  let selectedStar=null;
+  let selectedPoints=null;
+
+  /* ----- Render grid ----- */
+  function initials(name){ return name.replace(/[★0-9\s]/g,'').slice(0,2) || "★"; }
+
+  function render(){
+    const g=document.getElementById('grid');
+    g.innerHTML=stars.map(s=>`
+      <article class="star-card">
+        <div class="rank-badge">${s.id}</div>
+        <div class="star-img" style="background:linear-gradient(135deg,${s.grad[0]},${s.grad[1]})">
+          <span class="initials">${initials(s.name)}</span>
+        </div>
+        <div class="star-body">
+          <div class="star-name">${s.name}</div>
+          <!-- 2 details -->
+          <div class="detail-list">
+            <div class="detail-row"><span class="ic">🎬</span> บทบาท: <b>${s.role}</b></div>
+            <div class="detail-row"><span class="ic">📺</span> ผลงาน: <b>${s.series}</b></div>
+          </div>
+          <div class="vote-count">⭐ <span id="vc-${s.id}">${s.votes.toLocaleString()}</span> คะแนน</div>
+          <!-- social share -->
+          <div class="social">
+            <a class="s-fb"  title="แชร์ Facebook" href="javascript:void(0)" onclick="share('Facebook','${s.name}')">f</a>
+            <a class="s-x"   title="แชร์ X"        href="javascript:void(0)" onclick="share('X','${s.name}')">𝕏</a>
+            <a class="s-line" title="แชร์ LINE"    href="javascript:void(0)" onclick="share('LINE','${s.name}')">L</a>
+            <a class="s-link" title="คัดลอกลิงก์"  href="javascript:void(0)" onclick="share('คัดลอกลิงก์','${s.name}')">🔗</a>
+          </div>
+          <button class="vote-btn" onclick="openVote(${s.id})">โหวตเลย</button>
+        </div>
+      </article>`).join('');
+    updateTotal();
+  }
+
+  function updateTotal(){
+    const t=stars.reduce((a,s)=>a+s.votes,0);
+    document.getElementById('totalVotes').textContent='คะแนนรวมทั้งหมด: '+t.toLocaleString()+' คะแนน';
+  }
+
+  /* ----- Member toggle (simulate login) ----- */
+  function toggleMember(){
+    isMember=!isMember;
+    document.getElementById('memberStatus').textContent=isMember?'สมาชิก':'บุคคลทั่วไป';
+    document.getElementById('loginBtn').textContent=isMember?'ออกจากระบบ':'เข้าสู่ระบบ';
+    showToast(isMember?'เข้าสู่ระบบสำเร็จ ✓':'ออกจากระบบแล้ว');
+  }
+
+  /* ----- Open vote modal ----- */
+  function openVote(id){
+    selectedStar=stars.find(s=>s.id===id);
+    selectedPoints=null;
+    if(!isMember){ renderGate(); }
+    else { renderPointPicker(); }
+    document.getElementById('overlay').classList.add('open');
+  }
+
+  /* members-only gate */
+  function renderGate(){
+    document.getElementById('modal').innerHTML=`
+      <button class="close" onclick="closeModal()">×</button>
+      <div class="gate">
+        <div class="lock">🔒</div>
+        <h3>ต้องเป็นสมาชิกถึงโหวตได้</h3>
+        <p>กรุณาเข้าสู่ระบบหรือสมัครสมาชิกก่อนทำการโหวตให้ ${selectedStar.name}</p>
+        <button class="btn btn-login" onclick="toggleMember();renderPointPicker()">เข้าสู่ระบบเพื่อโหวต</button>
+      </div>`;
+  }
+
+  /* point picker (10/20/50/100) */
+  function renderPointPicker(){
+    selectedPoints=null;
+    const opts=[10,20,50,100];
+    document.getElementById('modal').innerHTML=`
+      <button class="close" onclick="closeModal()">×</button>
+      <h3>โหวตให้ ${selectedStar.name}</h3>
+      <p class="who">${selectedStar.role} • <b>${selectedStar.series}</b></p>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:12px">เลือกจำนวนคะแนนที่ต้องการมอบให้</p>
+      <div class="points">
+        ${opts.map(p=>`
+          <button class="point-btn" data-pt="${p}" onclick="pick(${p})">
+            <span class="pt">${p}</span><span class="lbl">คะแนน</span>
+          </button>`).join('')}
+      </div>
+      <button class="modal-confirm" id="confirmBtn" disabled onclick="confirmVote()">เลือกคะแนนก่อนกดโหวต</button>`;
+  }
+
+  function pick(p){
+    selectedPoints=p;
+    document.querySelectorAll('.point-btn').forEach(b=>b.classList.toggle('active',+b.dataset.pt===p));
+    const c=document.getElementById('confirmBtn');
+    c.disabled=false;
+    c.textContent='กดโหวต '+p+' คะแนน';
+  }
+
+  /* confirm -> success popup */
+  function confirmVote(){
+    if(!selectedPoints||!selectedStar) return;
+    selectedStar.votes+=selectedPoints;
+    document.getElementById('vc-'+selectedStar.id).textContent=selectedStar.votes.toLocaleString();
+    updateTotal();
+    document.getElementById('modal').innerHTML=`
+      <button class="close" onclick="closeModal()">×</button>
+      <div class="success">
+        <div class="check">✓</div>
+        <h3>โหวตสำเร็จ!</h3>
+        <p>ขอบคุณที่ร่วมโหวต คะแนนของคุณถูกบันทึกเรียบร้อยแล้ว</p>
+        <div class="summary">
+          คุณมอบ <b>${selectedPoints} คะแนน</b> ให้ <b>${selectedStar.name}</b><br>
+          คะแนนรวมตอนนี้: <b>${selectedStar.votes.toLocaleString()} คะแนน</b>
+        </div>
+        <button class="modal-confirm" onclick="closeModal()">เสร็จสิ้น</button>
+      </div>`;
+  }
+
+  function closeModal(){ document.getElementById('overlay').classList.remove('open'); }
+
+  function share(platform,name){ showToast('แชร์ '+name+' ผ่าน '+platform+' ✓'); }
+
+  let toastTimer;
+  function showToast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg;t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+  }
+
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+  render();
+</script>
+</body>
+</html>
