@@ -1,11 +1,261 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My GitHub Page</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GMM • ระบบภายใน</title>
+<style>
+  :root{
+    --pink:#ff2e88;--pink-dark:#d61a6e;--purple:#7b2ff7;
+    --ink:#1a1030;--muted:#7c7390;--card:#ffffff;--gold:#ffc83d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',-apple-system,'Prompt','Sarabun',sans-serif;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(123,47,247,.45), transparent 60%),
+      linear-gradient(180deg,#150a2e 0%, #0f0820 100%);
+    color:#fff;min-height:100vh;
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:0 18px}
+
+  /* ---------- Login screen ---------- */
+  .login-screen{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .login-card{
+    width:100%;max-width:400px;background:#fff;color:var(--ink);
+    border-radius:22px;padding:34px 30px;
+    box-shadow:0 30px 80px rgba(0,0,0,.55);
+    animation:pop .3s ease;
+  }
+  @keyframes pop{from{transform:translateY(18px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+  .login-logo{
+    width:60px;height:60px;border-radius:16px;margin:0 auto 16px;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    display:grid;place-items:center;font-size:30px;color:#fff;
+    box-shadow:0 10px 24px rgba(255,46,136,.4);
+  }
+  .login-card h1{font-size:22px;font-weight:900;text-align:center}
+  .login-card .sub{text-align:center;color:var(--muted);font-size:14px;margin:6px 0 22px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:var(--ink)}
+  .field input{
+    width:100%;padding:13px 14px;border:2px solid #efe9fb;border-radius:12px;
+    font-size:15px;background:#faf7ff;color:var(--ink);outline:none;transition:border .15s;
+  }
+  .field input:focus{border-color:var(--pink)}
+  .login-btn{
+    width:100%;padding:14px;border:none;border-radius:12px;cursor:pointer;
+    font-size:16px;font-weight:800;color:#fff;margin-top:6px;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    box-shadow:0 10px 24px rgba(255,46,136,.4);transition:filter .12s,transform .12s;
+  }
+  .login-btn:hover{filter:brightness(1.08)}
+  .login-btn:active{transform:translateY(1px)}
+  .login-err{
+    display:none;background:#ffe9f1;color:var(--pink-dark);font-size:13px;font-weight:700;
+    padding:10px 12px;border-radius:10px;margin-bottom:14px;text-align:center;
+  }
+  .login-err.show{display:block;animation:shake .3s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .login-note{margin-top:16px;font-size:12px;color:var(--muted);text-align:center;line-height:1.5}
+
+  /* ---------- Dashboard / menu ---------- */
+  #dashboard{display:none}
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;background:rgba(15,8,32,.8);backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+  .brand .logo{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    display:grid;place-items:center;font-size:18px;
+  }
+  .topbar-right{display:flex;align-items:center;gap:12px}
+  .session-pill{font-size:12px;color:#cbbfe6;background:rgba(255,255,255,.08);
+    padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.12)}
+  .logout-btn{
+    cursor:pointer;border:none;border-radius:999px;font-weight:700;font-size:13px;
+    padding:8px 16px;color:#fff;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.2);transition:background .15s;
+  }
+  .logout-btn:hover{background:rgba(255,46,136,.3)}
+
+  .hero{padding:40px 0 10px}
+  .hero h2{font-size:30px;font-weight:900}
+  .hero p{color:#cbbfe6;margin-top:8px;font-size:15px}
+
+  .menu-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:18px;padding:24px 0 60px;
+  }
+  .menu-card{
+    background:var(--card);color:var(--ink);border-radius:18px;overflow:hidden;
+    text-decoration:none;display:flex;flex-direction:column;
+    box-shadow:0 12px 30px rgba(0,0,0,.35);
+    transition:transform .18s,box-shadow .18s;position:relative;
+  }
+  .menu-card:hover{transform:translateY(-6px);box-shadow:0 22px 44px rgba(123,47,247,.45)}
+  .menu-card .thumb{
+    height:120px;display:grid;place-items:center;font-size:54px;
+    background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;
+  }
+  .menu-card .body{padding:16px 16px 18px}
+  .menu-card .tag{
+    display:inline-block;font-size:11px;font-weight:800;letter-spacing:.5px;
+    color:var(--pink-dark);background:#ffe9f1;padding:3px 10px;border-radius:999px;margin-bottom:8px;
+  }
+  .menu-card h3{font-size:18px;font-weight:800}
+  .menu-card p{color:var(--muted);font-size:13px;margin-top:5px;line-height:1.4}
+  .menu-card .go{margin-top:12px;font-size:13px;font-weight:800;color:var(--purple)}
+
+  .empty{
+    grid-column:1/-1;text-align:center;color:#cbbfe6;padding:40px;
+    border:2px dashed rgba(255,255,255,.15);border-radius:18px;
+  }
+  .footer{text-align:center;padding:24px;color:rgba(255,255,255,.4);font-size:13px}
+</style>
 </head>
 <body>
-    <h1>สวัสดี GitHub Pages!55555</h1>
+
+  <!-- ===== LOGIN ===== -->
+  <div class="login-screen" id="loginScreen">
+    <form class="login-card" id="loginForm" onsubmit="return doLogin(event)">
+      <div class="login-logo">★</div>
+      <h1>เข้าสู่ระบบ</h1>
+      <p class="sub">กรุณากรอกชื่อผู้ใช้และรหัสผ่านเพื่อเข้าใช้งาน</p>
+      <div class="login-err" id="loginErr">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</div>
+      <div class="field">
+        <label for="u">ชื่อผู้ใช้ (Username)</label>
+        <input id="u" type="text" autocomplete="username" placeholder="admin" required>
+      </div>
+      <div class="field">
+        <label for="p">รหัสผ่าน (Password)</label>
+        <input id="p" type="password" autocomplete="current-password" placeholder="••••••••" required>
+      </div>
+      <button class="login-btn" type="submit">เข้าสู่ระบบ</button>
+      <p class="login-note">🔒 เซสชันใช้งานได้ 1 วัน หลังจากนั้นต้องเข้าสู่ระบบใหม่</p>
+    </form>
+  </div>
+
+  <!-- ===== DASHBOARD / MENU ===== -->
+  <div id="dashboard">
+    <div class="topbar">
+      <div class="brand"><span class="logo">★</span> GMM<span style="color:var(--pink)">PANEL</span></div>
+      <div class="topbar-right">
+        <span class="session-pill" id="sessionInfo"></span>
+        <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="hero">
+        <h2>เมนูระบบ</h2>
+        <p>เลือกระบบที่ต้องการใช้งาน — ระบบใหม่ที่เพิ่มในอนาคตจะแสดงที่นี่</p>
+      </div>
+      <div class="menu-grid" id="menuGrid"></div>
+    </div>
+    <div class="footer">GMM Internal Panel • สร้างเพื่อการสาธิตเท่านั้น</div>
+  </div>
+
+<script>
+  /* =========================================================
+     เพิ่มไฟล์ HTML ใหม่ในอนาคต → เพิ่ม object ในอาเรย์ PAGES นี้
+     แล้วเมนูจะแสดงให้อัตโนมัติ
+  ========================================================= */
+  const PAGES = [
+    {
+      title: "VOTE 20 STARS",
+      desc:  "ระบบโหวต 20 ดาว พร้อมแบนเนอร์และแชร์โซเชียล",
+      file:  "vote.html",
+      icon:  "⭐",
+      tag:   "Voting"
+    }
+    // ตัวอย่างเพิ่มในอนาคต:
+    // ,{ title:"ระบบใหม่", desc:"คำอธิบาย", file:"new-page.html", icon:"📊", tag:"New" }
+  ];
+
+  /* ---------- Auth config ---------- */
+  const AUTH_USER = "admin";
+  const AUTH_PASS = "gmmtv9080";
+  const SESSION_MS = 24 * 60 * 60 * 1000;        // 1 วัน
+  const KEY = "gmm_session_expiry";
+
+  function isLoggedIn(){
+    const exp = parseInt(localStorage.getItem(KEY) || "0", 10);
+    return exp && Date.now() < exp;
+  }
+
+  function doLogin(e){
+    e.preventDefault();
+    const u = document.getElementById('u').value.trim();
+    const p = document.getElementById('p').value;
+    if(u === AUTH_USER && p === AUTH_PASS){
+      localStorage.setItem(KEY, String(Date.now() + SESSION_MS));
+      document.getElementById('loginErr').classList.remove('show');
+      showDashboard();
+    } else {
+      const err = document.getElementById('loginErr');
+      err.classList.add('show');
+      document.getElementById('p').value = '';
+    }
+    return false;
+  }
+
+  function logout(){
+    localStorage.removeItem(KEY);
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('u').value = '';
+    document.getElementById('p').value = '';
+  }
+
+  function showDashboard(){
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    renderMenu();
+    updateSessionInfo();
+  }
+
+  function updateSessionInfo(){
+    const exp = parseInt(localStorage.getItem(KEY) || "0", 10);
+    const d = new Date(exp);
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mi = String(d.getMinutes()).padStart(2,'0');
+    document.getElementById('sessionInfo').textContent =
+      'เซสชันหมดอายุ ' + dd + '/' + mm + ' ' + hh + ':' + mi;
+  }
+
+  function renderMenu(){
+    const g = document.getElementById('menuGrid');
+    if(!PAGES.length){
+      g.innerHTML = '<div class="empty">ยังไม่มีระบบในเมนู — เพิ่มไฟล์ได้ที่อาเรย์ PAGES</div>';
+      return;
+    }
+    g.innerHTML = PAGES.map(pg => `
+      <a class="menu-card" href="${pg.file}">
+        <div class="thumb">${pg.icon || '📄'}</div>
+        <div class="body">
+          <span class="tag">${pg.tag || 'Page'}</span>
+          <h3>${pg.title}</h3>
+          <p>${pg.desc || ''}</p>
+          <div class="go">เปิดใช้งาน →</div>
+        </div>
+      </a>`).join('');
+  }
+
+  /* ---------- Init: ตรวจเซสชันทุกครั้งที่เปิดหน้า ---------- */
+  if(isLoggedIn()){
+    showDashboard();
+  } else {
+    localStorage.removeItem(KEY);
+    document.getElementById('loginScreen').style.display = 'flex';
+  }
+</script>
 </body>
 </html>
