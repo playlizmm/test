@@ -1,0 +1,16 @@
+[
+  {
+    "file": "hellofriend.html",
+    "title": "Hello Friend",
+    "desc": "ไฟล์ hellofriend.html",
+    "icon": "⭐",
+    "tag": "Page"
+  },
+  {
+    "file": "vote.html",
+    "title": "VOTE 20 STARS",
+    "desc": "ไฟล์ vote.html",
+    "icon": "📊",
+    "tag": "Page"
+  }
+]

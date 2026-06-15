@@ -163,20 +163,25 @@
 
 <script>
   /* =========================================================
-     เพิ่มไฟล์ HTML ใหม่ในอนาคต → เพิ่ม object ในอาเรย์ PAGES นี้
-     แล้วเมนูจะแสดงให้อัตโนมัติ
+     รายการเมนูถูกสร้างอัตโนมัติจาก pages.json (สร้างโดย build.js
+     ตอน deploy) — เพิ่มไฟล์ .html ใหม่ใน repo แล้วเมนูจะแสดงเอง
+     ไม่ต้องแก้โค้ดนี้
+     FALLBACK ด้านล่างใช้กรณีเปิดไฟล์ตรงๆ (file://) ที่ไม่มี pages.json
   ========================================================= */
-  const PAGES = [
-    {
-      title: "VOTE 20 STARS",
-      desc:  "ระบบโหวต 20 ดาว พร้อมแบนเนอร์และแชร์โซเชียล",
-      file:  "vote.html",
-      icon:  "⭐",
-      tag:   "Voting"
-    }
-    // ตัวอย่างเพิ่มในอนาคต:
-    // ,{ title:"ระบบใหม่", desc:"คำอธิบาย", file:"new-page.html", icon:"📊", tag:"New" }
+  const FALLBACK_PAGES = [
+    { title:"VOTE 20 STARS", desc:"ระบบโหวต 20 ดาว พร้อมแบนเนอร์และแชร์โซเชียล", file:"vote.html", icon:"⭐", tag:"Page" }
   ];
+  let PAGES = FALLBACK_PAGES;
+
+  async function loadPages(){
+    try{
+      const res = await fetch('pages.json', {cache:'no-store'});
+      if(res.ok){
+        const data = await res.json();
+        if(Array.isArray(data) && data.length) PAGES = data;
+      }
+    }catch(e){ /* ใช้ FALLBACK_PAGES */ }
+  }
 
   /* ---------- Auth config ---------- */
   const AUTH_USER = "admin";
@@ -213,11 +218,12 @@
     document.getElementById('p').value = '';
   }
 
-  function showDashboard(){
+  async function showDashboard(){
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
-    renderMenu();
     updateSessionInfo();
+    await loadPages();
+    renderMenu();
   }
 
   function updateSessionInfo(){
