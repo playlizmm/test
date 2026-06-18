@@ -7,9 +7,9 @@
     "tag": "Page"
   },
   {
-    "file": "vote.html",
+    "file": "vote/vote.html",
     "title": "VOTE 20 STARS",
-    "desc": "ไฟล์ vote.html",
+    "desc": "ไฟล์ vote/vote.html",
     "icon": "📊",
     "tag": "Page"
   }
